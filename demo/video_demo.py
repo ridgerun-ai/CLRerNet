@@ -9,8 +9,7 @@ from argparse import ArgumentParser
 from mmdet.apis import init_detector
 from libs.api.inference import inference_one_image
 from libs.utils.visualizer import visualize_lanes
-from get_config_dataset_culane_clrernet import get_config_dataset_culane
-
+from mmcv import Config
 
 def parse_args():
     parser = ArgumentParser()
@@ -25,7 +24,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
 def main(args):
 
     # Open input video
@@ -39,15 +37,41 @@ def main(args):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    # Initialize the model
-    cfg_options = {
-        'model.test_cfg.ori_img_w': width,
-        'model.test_cfg.ori_img_h': height,
-        'data': get_config_dataset_culane(width, height)
-    }
+    cfg = Config.fromfile('configs/clrernet/culane/clrernet_culane_dla34_ema.py')
 
-    model = init_detector(args.config, args.checkpoint,
-                          device=args.device, cfg_options=cfg_options)
+    cfg.model.test_cfg.ori_img_w = width
+    cfg.model.test_cfg.ori_img_h = height
+
+    cfg.crop_bbox = [
+        0,
+        270,
+        width,
+        height
+    ],
+
+    cfg.train_al_pipeline[1].x_max = width
+    cfg.train_al_pipeline[1].y_max = height
+
+    cfg.val_al_pipeline[1].x_max = width
+    cfg.val_al_pipeline[1].y_max = height
+
+    cfg.train_pipeline[0].pipelines[1].x_max = width
+    cfg.train_pipeline[0].pipelines[1].y_max = height
+
+    cfg.val_pipeline[0].pipelines[1].x_max = width
+    cfg.val_pipeline[0].pipelines[1].y_max = height
+
+    cfg.data.train.pipeline[0].pipelines[1].x_max = width
+    cfg.data.train.pipeline[0].pipelines[1].y_max = height
+
+    cfg.data.val.pipeline[0].pipelines[1].x_max = width
+    cfg.data.val.pipeline[0].pipelines[1].y_max = height
+
+    cfg.data.test.pipeline[0].pipelines[1].x_max = width
+    cfg.data.test.pipeline[0].pipelines[1].y_max = height
+
+    # Initialize the model
+    model = init_detector(cfg, args.checkpoint, device=args.device)
 
     # Define video writer for output video
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
