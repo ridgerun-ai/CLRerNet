@@ -9,6 +9,7 @@ from argparse import ArgumentParser
 from mmdet.apis import init_detector
 from libs.api.inference import inference_one_image
 from libs.utils.visualizer import visualize_lanes
+from get_config_dataset_culane_clrernet import get_config_dataset_culane
 
 
 def parse_args():
@@ -26,8 +27,6 @@ def parse_args():
 
 
 def main(args):
-    # Initialize the model
-    model = init_detector(args.config, args.checkpoint, device=args.device)
 
     # Open input video
     cap = cv2.VideoCapture(args.video)
@@ -39,6 +38,16 @@ def main(args):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
+
+    # Initialize the model
+    cfg_options = {
+        'model.test_cfg.ori_img_w': width,
+        'model.test_cfg.ori_img_h': height,
+        'data': get_config_dataset_culane(width, height)
+    }
+
+    model = init_detector(args.config, args.checkpoint,
+                          device=args.device, cfg_options=cfg_options)
 
     # Define video writer for output video
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
