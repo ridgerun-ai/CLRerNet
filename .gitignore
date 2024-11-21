@@ -8,3 +8,5 @@ work_dirs
 .DS_Store
 *.mp4
 *.pth
+build
+*.egg*
