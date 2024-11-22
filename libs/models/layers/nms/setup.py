@@ -1,11 +1,15 @@
 from setuptools import setup
-
-from torch.utils.cpp_extension import CUDAExtension, BuildExtension
+from torch.utils.cpp_extension import CppExtension, BuildExtension
 
 setup(
     name='nms',
     packages=['nms'],
     package_dir={'': 'src'},
-    ext_modules=[CUDAExtension('nms.details', ['src/nms.cpp', 'src/nms_kernel.cu'])],
+    ext_modules=[
+        CppExtension(
+            name='nms.details',
+            sources=['src/nms.cpp']  # Solo incluye los archivos .cpp
+        )
+    ],
     cmdclass={'build_ext': BuildExtension},
 )
