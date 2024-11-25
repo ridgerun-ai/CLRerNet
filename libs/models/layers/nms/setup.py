@@ -8,7 +8,7 @@ setup(
     ext_modules=[
         CppExtension(
             name='nms.details',
-            sources=['src/nms.cpp']  # Solo incluye los archivos .cpp
+            sources=['src/nms.cpp']
         )
     ],
     cmdclass={'build_ext': BuildExtension},

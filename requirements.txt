@@ -4,3 +4,6 @@ pytest
 pytest-cov
 tensorboard
 yapf==0.40.1
+openmim==0.3.3
+Cython
+mmdet @ git+https://github.com/open-mmlab/mmdetection.git@v2.28.0#egg=mmdet

@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('config', help='Config file')
     parser.add_argument('checkpoint', help='Checkpoint file')
     parser.add_argument('--out-file', default='result.mp4', help='Path to output video file')
-    parser.add_argument('--device', default='cuda:0', help='Device used for inference')
+    parser.add_argument('--device', default='cpu', help='Device used for inference')
     parser.add_argument(
         '--score-thr', type=float, default=0.3, help='bbox score threshold'
     )
